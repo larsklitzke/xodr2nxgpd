@@ -1,0 +1,25 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:param name="junction" />
+  <xsl:template match="/OpenDRIVE">
+    <intersection>
+      <xsl:attribute name="id">
+        <xsl:value-of select="$junction" />
+      </xsl:attribute>
+      <connectivity>
+        <xsl:for-each select="road[@junction=$junction]">
+          <node>
+            <xsl:attribute name="id">
+              <xsl:value-of select="@id" />
+            </xsl:attribute>
+            <xsl:attribute name="successor">
+              <xsl:value-of select="link/successor[@elementType='road']/@elementId" />
+            </xsl:attribute>
+            <xsl:attribute name="predecessor">
+              <xsl:value-of select="link/predecessor[@elementType='road']/@elementId" />
+            </xsl:attribute>
+          </node>
+        </xsl:for-each>
+      </connectivity>
+    </intersection>
+  </xsl:template>
+</xsl:stylesheet>

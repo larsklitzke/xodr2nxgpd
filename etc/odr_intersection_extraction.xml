@@ -1,0 +1,50 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:template match="/OpenDRIVE">
+        <network>
+            <xsl:for-each select='junction'>
+                <intersection>
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="current()/@id"/>
+                    </xsl:attribute>
+                    <connecting-roads>
+                        <xsl:for-each select='//road[@junction=current()/@id]'>
+                            <road>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@id" />
+                                </xsl:attribute>
+                                <xsl:attribute name="successor">
+                                    <xsl:value-of select="link/successor/@elementId" />
+                                </xsl:attribute>
+                            </road>
+                        </xsl:for-each>
+                    </connecting-roads>
+                    <outgoing-roads>
+                        <xsl:for-each select="//road[@junction=current()/@id]">
+                            <road>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="link/successor/@elementId" />
+                                </xsl:attribute>
+                                <xsl:attribute name="predecessor">
+                                    <xsl:value-of select="@id" />
+                                </xsl:attribute>
+                            </road>
+                        </xsl:for-each>
+                    </outgoing-roads>
+                    <incoming-roads>
+                        <xsl:for-each select="connection">
+                            <road>
+                                <xsl:attribute name="id">
+                                    <xsl:value-of select="@incomingRoad" />
+                                </xsl:attribute>
+                                <xsl:attribute name="successor">
+                                    <xsl:value-of select="@connectingRoad" />
+                                </xsl:attribute>
+                            </road>
+                        </xsl:for-each>
+                    </incoming-roads>
+                </intersection>
+            </xsl:for-each>
+        </network>
+    </xsl:template>
+</xsl:stylesheet>
