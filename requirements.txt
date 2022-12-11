@@ -3,3 +3,10 @@ pbr
 colorcet
 seaborn
 matplotlib
+requests
+geopandas
+networkx
+scipy
+branca
+folium
+mapclassify
