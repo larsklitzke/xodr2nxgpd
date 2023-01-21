@@ -186,10 +186,13 @@ class IntersectionNetwork(TopologyMixin):
 
         return gpf
 
-    def plot(self, ax=None, dx=0.3, highlight_nodes=None):
+    def plot(self, ax=None, dx=0.3, highlight_nodes=None, highlight_edges=None):
 
         if highlight_nodes is None:
             highlight_nodes = []
+
+        if highlight_edges is None:
+            highlight_edges = []
 
         pos = nx.shell_layout(self._graph)
 
@@ -242,6 +245,7 @@ class IntersectionNetwork(TopologyMixin):
         for r in self.incoming_roads:
             edges_pos[r] = pos[r] - np.array([dx, 0])
 
+        # draw highlighted edges
         nx.draw_networkx_edges(
             self._graph,
             edges_pos,
@@ -249,7 +253,19 @@ class IntersectionNetwork(TopologyMixin):
             node_size=0,
             min_target_margin=0,
             min_source_margin=5,
-            edgelist=self._graph.edges(SpecialNode.START)
+            edge_color="#AA0000",
+            edgelist=list(set(self._graph.edges(SpecialNode.START)).intersection(highlight_edges))
+        )
+
+        # draw non-highlighted edges
+        nx.draw_networkx_edges(
+            self._graph,
+            edges_pos,
+            ax=ax,
+            node_size=0,
+            min_target_margin=0,
+            min_source_margin=5,
+            edgelist=list(set(self._graph.edges(SpecialNode.START)) - set(highlight_edges))
         )
 
         # draw incoming -> connecting
@@ -261,14 +277,27 @@ class IntersectionNetwork(TopologyMixin):
         for r in self.connecting_roads:
             edges_pos[r] -= np.array([dx, 0])
 
+        # draw highlighted edges
         nx.draw_networkx_edges(
             self._graph,
             edges_pos,
             ax=ax,
             node_size=0,
             min_target_margin=0,
-            min_source_margin=0,
-            edgelist=self._graph.edges(self.incoming_roads)
+            min_source_margin=5,
+            edge_color="#AA0000",
+            edgelist=list(set(self._graph.edges(self.incoming_roads)).intersection(highlight_edges))
+        )
+
+        # draw non-highlighted edges
+        nx.draw_networkx_edges(
+            self._graph,
+            edges_pos,
+            ax=ax,
+            node_size=0,
+            min_target_margin=0,
+            min_source_margin=5,
+            edgelist=list(set(self._graph.edges(self.incoming_roads)) - set(highlight_edges))
         )
 
         # draw connecting -> outgoing roads
@@ -279,14 +308,28 @@ class IntersectionNetwork(TopologyMixin):
         for r in self.outgoing_roads:
             edges_pos[r] -= np.array([dx * 0.5, 0])
 
+        
+        # draw highlighted edges
         nx.draw_networkx_edges(
             self._graph,
             edges_pos,
             ax=ax,
             node_size=0,
             min_target_margin=10,
-            min_source_margin=0,
-            edgelist=self._graph.edges(self.connecting_roads)
+            min_source_margin=5,
+            edge_color="#AA0000",
+            edgelist=list(set(self._graph.edges(self.connecting_roads)).intersection(highlight_edges))
+        )
+
+        # draw non-highlighted edges
+        nx.draw_networkx_edges(
+            self._graph,
+            edges_pos,
+            ax=ax,
+            node_size=0,
+            min_target_margin=10,
+            min_source_margin=5,
+            edgelist=list(set(self._graph.edges(self.connecting_roads)) - set(highlight_edges))
         )
 
         # draw outgoing -> end node
@@ -294,16 +337,29 @@ class IntersectionNetwork(TopologyMixin):
         for r in self.outgoing_roads:
             edges_pos[r] = pos[r] + np.array([1.5 * dx, 0])
 
+    
+        # draw highlighted edges
         nx.draw_networkx_edges(
             self._graph,
             edges_pos,
             ax=ax,
             node_size=0,
             min_target_margin=10,
-            min_source_margin=0,
-            edgelist=self._graph.edges(self.outgoing_roads)
+            min_source_margin=5,
+            edge_color="#AA0000",
+            edgelist=list(set(self._graph.edges(self.outgoing_roads)).intersection(highlight_edges))
         )
 
+        # draw non-highlighted edges
+        nx.draw_networkx_edges(
+            self._graph,
+            edges_pos,
+            ax=ax,
+            node_size=0,
+            min_target_margin=10,
+            min_source_margin=5,
+            edgelist=list(set(self._graph.edges(self.outgoing_roads)) - set(highlight_edges))
+        )
 
 class IntersectionRoad(geopandas.GeoDataFrame):
 
