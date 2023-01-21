@@ -186,46 +186,54 @@ class IntersectionNetwork(TopologyMixin):
 
         return gpf
 
-    def plot(
-        self,
-        ax=None,
-        dx=0.3,
-    ):
+    def plot(self, ax=None, dx=0.3, highlight_nodes=None):
+
+        if highlight_nodes is None:
+            highlight_nodes = []
 
         pos = nx.shell_layout(self._graph)
 
         pos[SpecialNode.START] = np.array([-2, 0])
         pos[SpecialNode.END] = np.array([2, 0])
 
-        roads_in = self.incoming_roads
-        y = np.linspace(-1, 1, len(roads_in))
+        # set positions of roads in the graph
+        for road, x_offset in zip((self.incoming_roads, self.connecting_roads, self.outgoing_roads), (-1, 0, 1)):
+            y = np.linspace(-1, 1, len(road))
 
-        for r, y_ in zip(roads_in, y):
-            pos[r] = np.array([-1, y_])
-
-        roads_conn = self.connecting_roads
-        y = np.linspace(-1, 1, len(roads_conn))
-
-        for r, y_ in zip(roads_conn, y):
-            pos[r] = np.array([0, y_])
-
-        roads_out = self.outgoing_roads
-        y = np.linspace(-1, 1, len(roads_out))
-
-        for r, y_ in zip(roads_out, y):
-            pos[r] = np.array([1, y_])
+            for r, y_ in zip(road, y):
+                pos[r] = np.array([x_offset, y_])
 
         nx.draw_networkx_nodes(
             self._graph, pos, node_size=0, ax=ax, nodelist=list(set(list(self._graph.nodes)) - set(list(SpecialNode)))
         )
+
+        # draw special nodes
         nx.draw_networkx_nodes(
             self._graph, pos, node_size=100, ax=ax, nodelist=[SpecialNode.START, SpecialNode.END], node_color="#3787c3"
         )
 
+        # draw the highlighted nodes
         nx.draw_networkx_labels(
-            self._graph, pos, clip_on=False, ax=ax, labels={p: p
-                                                            for p in pos.keys()
-                                                            if not SpecialNode.isa(p)}
+            self._graph,
+            pos,
+            clip_on=False,
+            font_color="#AA0000",
+            ax=ax,
+            labels={p: p
+                    for p in pos.keys()
+                    if p in highlight_nodes and not SpecialNode.isa(p)}
+        )
+
+        # draw the normal nodes
+        nx.draw_networkx_labels(
+            self._graph,
+            pos,
+            clip_on=False,
+            font_color="#000000",
+            ax=ax,
+            labels={p: p
+                    for p in pos.keys()
+                    if p not in highlight_nodes and not SpecialNode.isa(p)}
         )
 
         # draw start -> incoming roads
