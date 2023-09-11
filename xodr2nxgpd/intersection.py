@@ -1,7 +1,7 @@
 import functools
 import logging
 from enum import IntEnum
-from typing import Any, List, Tuple, Union
+from typing import List, Tuple, Union
 from xml.etree import ElementTree
 
 import geopandas
@@ -9,12 +9,12 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 import pyproj
+from opendrive2lanelet.opendriveparser.elements.opendrive import OpenDrive
+from opendrive2lanelet.opendriveparser.elements.road import Road as OdrRoad
 from shapely.geometry import LineString
 
 from xodr2nxgpd.core import OpenDriveTree, TopologyMixin
 from xodr2nxgpd.io import load_intersection_selection_transformation
-from xodr2nxgpd.opendriveparser.elements.opendrive import OpenDrive
-from xodr2nxgpd.opendriveparser.elements.road import Road as OdrRoad
 
 
 class SpecialNode(IntEnum):

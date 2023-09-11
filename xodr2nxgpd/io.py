@@ -6,6 +6,7 @@ import zipfile
 
 import requests
 from lxml import etree
+from opendrive2lanelet.opendriveparser.parser import parse_opendrive
 
 from xodr2nxgpd import ROOT_PATH
 
@@ -18,7 +19,6 @@ FIGURE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 
 @functools.lru_cache
 def parse_opendrive(tree: etree.ElementTree):
-    from xodr2nxgpd.opendriveparser.parser import parse_opendrive
 
     return parse_opendrive(tree.getroot())
 
